@@ -6,6 +6,9 @@ module.exports = (robot) ->
   robot.router.post "/hubot/jiralink", (req, res) ->
     data = if req.body.payload? then JSON.parse req.body.payload else req.body
 
-    robot.logger.info req.get("Authorization")
     robot.logger.info data
+    if data.issue
+      robot.logger.info "RAW:"
+      robot.logger.info req.body
+      robot.messageRoom "jira_test", "#{data.webhookEvent}: #{data.issue.key}"
     res.send "OK"
