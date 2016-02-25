@@ -1,3 +1,5 @@
+util = require "util"
+
 module.exports = (robot) ->
   robot.hear /(ES-[0-9]+)/, (res) ->
    jiraLink = "https://everydollar.atlassian.net/browse/" + res.match[0] 
@@ -8,7 +10,6 @@ module.exports = (robot) ->
 
     robot.logger.info data
     if data.issue
-      robot.logger.info "RAW:"
-      robot.logger.info req.body
-      robot.messageRoom "jira_test", "#{data.webhookEvent}: #{data.issue.key}"
+      robot.logger.info util.inspect(data, false, null)
+      robot.messageRoom "jira_test", "#{data.webhookEvent}: #{data.issue.key} -- Status: #{data.issue.fields.status.name}"
     res.send "OK"
