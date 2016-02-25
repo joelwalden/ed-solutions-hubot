@@ -6,6 +6,9 @@ module.exports = (robot) ->
    jiraLink = "https://everydollar.atlassian.net/browse/" + res.match[0] 
    res.reply "Here's a link for you: " + jiraLink
 
+  robot.hear /thanks,? edubot/i, (res) ->
+    res.reply "You're welcome"
+
   robot.router.post "/hubot/jiralink", (req, res) ->
     data = if req.body.payload? then JSON.parse req.body.payload else req.body
 
@@ -36,7 +39,7 @@ module.exports = (robot) ->
             when "Done" then msg = "#{ticket} is in Production."
             else msg = "Something happened with #{ticket}, but I'm not entirely sure what."
         
-        msg += "\n>*Summary*: #{data.issue.fields.summary}\n>*Link*: https://everydollar.atlassian.net/browse/#{key}"
+        msg += "\n>*Summary*: #{data.issue.fields.summary}\n>*Link*: https://everydollar.atlassian.net/browse/#{ticket}"
         composedMsg = "#{_.sample(salutations)}, #{_.sample(names)}! #{msg} #{_.sample(valedictions)}!"
 
         robot.messageRoom "jira_test", composedMsg
