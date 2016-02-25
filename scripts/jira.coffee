@@ -12,8 +12,8 @@ module.exports = (robot) ->
     if data.issue
       isES = (data.issue.key.match(/ES-[0-9]+/).length > 0)
       if isES
-        salutations = ["Hi there", "Greetings", "Salutations", "Good day", "Hello", "Whassup"]
-        names = ["team", "comrades", "human beings"]
+        salutations = ["Hi there", "Greetings", "Salutations", "Good day", "Hello", "Whassup", "How do you do"]
+        names = ["team", "comrades", "human beings", "inferior intelligences", "fellow kids"]
         valedictions = ["Go get 'em!", "You rock", "Yay"]
         ticket = data.issue.key
 
@@ -28,7 +28,7 @@ module.exports = (robot) ->
             when "Develop Pullable" then msg = "#{ticket} is ready for code review."
             when "Code Review Underway" then msg = "#{ticket} is being code reviewed."
             when "Code Review Pullable" then msg = "#{ticket} is ready for test!"
-            when "Test Underway" then msg = "#{ticket} is now on test."
+            when "Test Underway" then msg = "#{ticket} is being moved to test."
             when "Test Pullable" then msg = "#{ticket} is ready for QA."
             when "Merge Underway" then msg = "#{ticket} is being QA'd."
             when "Merge Pullable" then msg = "#{ticket} is ready to move to Production."
@@ -36,6 +36,7 @@ module.exports = (robot) ->
             when "Done" then msg = "#{ticket} is in Production."
             else msg = "Something happened with #{ticket}, but I'm not entirely sure what."
         
+        msg += "\n>*Summary*: #{data.issue.fields.summary}\n>*Link*: https://everydollar.atlassian.net/browse/#{key}"
         composedMsg = "#{_.sample(salutations)}, #{_.sample(names)}! #{msg} #{_.sample(valedictions)}!"
 
         robot.messageRoom "jira_test", composedMsg
