@@ -2,15 +2,14 @@ util = require "util"
 _ = require "lodash"
 
 module.exports = (robot) ->
-  robot.hear /(ES-[0-9]+)/, (res) ->
-   jiraLink = "https://everydollar.atlassian.net/browse/" + res.match[0] 
-   res.reply "Here's a link for you: " + jiraLink
+  robot.hear /(ES-[0-9]+)/g, (res) ->
+    createJiraLink res
 
-  robot.hear /thanks,? edubot/i, (res) ->
+  robot.hear /thanks,? @?edubot/i, (res) ->
     res.reply "You're welcome"
 
-  robot.hear /^@edubot$/, (res) ->
-    res.reply _.sample(["Yes?", "I'm listening", "What do you need?", "How can I help?", "Is there something I can do for you?", "What can I help you with?"])
+  robot.hear /^@?edubot\??$/, (res) ->
+    res.reply _.sample(["Yes?", "I'm listening.", "What do you need?", "How can I help?", "Is there something I can do for you?", "What can I help you with?"])
 
   robot.router.post "/hubot/jiralink", (req, res) ->
     data = if req.body.payload? then JSON.parse req.body.payload else req.body
@@ -42,3 +41,14 @@ module.exports = (robot) ->
 
           robot.messageRoom "jira_test", composedMsg
     res.send "OK"
+
+createJiraLink = (res) ->
+  match = res.match
+  if match.length == 1
+    jiraLink = "https://everydollar.atlassian.net/browse/" + res.match[0] 
+    res.reply "Here's a link for you:\n> #{jiraLink}"
+  else if match.length > 1
+    reply = "Here are some links for you: \n"
+    _.each match, (val) ->
+      reply += "> https://everydollar.atlassian.net/browse/#{val}\n"
+    res.reply reply
