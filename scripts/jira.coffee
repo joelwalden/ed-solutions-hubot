@@ -26,20 +26,23 @@ module.exports = (robot) ->
           msg = "#{ticket} has been created."
         else
           status = data.issue.fields.status.name
+          isQA = (status == "Test Pullable")
           switch status
-            when "Develop Underway" then msg = "#{ticket} is currently being developed."
-            when "Develop Pullable" then msg = "#{ticket} is ready for code review."
-            when "Code Review Pullable" then msg = "#{ticket} is ready for test!"
-            when "Test Pullable" then msg = "#{ticket} is ready for QA."
-            when "Deploy Underway" then msg = "#{ticket} is moving to Production."
-            when "Done" then msg = "#{ticket} is in Production."
+            when "Develop Pullable" then msg = "#{_.sample(salutations)}, #{_.sample(names)}! #{ticket} is ready for code review."
+            when "Code Review Pullable" then msg = "#{_.sample(salutations)}, #{_.sample(names)}! #{ticket} is pullable from code review."
+            when "Test Pullable" then msg = "#{_.sample(salutations)}, @emily.guadalupe! #{ticket} is ready for QA."
+            when "Deploy Underway" then msg = "#{_.sample(salutations)}, #{_.sample(names)}! #{ticket} is moving to Production."
+            when "Done" then msg = "#{_.sample(salutations)}, #{_.sample(names)}! #{ticket} is in Production."
             else msg = null
 
         if msg 
           msg += "\n>*Summary*: #{data.issue.fields.summary}\n>*Link*: https://everydollar.atlassian.net/browse/#{ticket}"
-          composedMsg = "#{_.sample(salutations)}, #{_.sample(names)}! #{msg}"
+          if isQA
+            broadcastRoom = "qa-ragecage"
+          else
+            broadcastRoom = "jira_test"
 
-          robot.messageRoom "jira_test", composedMsg
+          robot.messageRoom broadcastRoom, msg 
     res.send "OK"
 
 createJiraLink = (res) ->
