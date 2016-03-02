@@ -19,20 +19,19 @@ module.exports = (robot) ->
       isES = (data.issue.key.match(/ES-[0-9]+/).length > 0)
       if isES
         salutations = ["Hi there", "Greetings", "Salutations", "Good day", "Hello", "What's up", "How do you do"]
-        names = ["team", "comrades", "human beings", "inferior intelligences", "fellow kids"]
         ticket = data.issue.key
 
         if data.webhookEvent == "jira:issue_created"
           msg = "#{ticket} has been created."
         else
           status = data.issue.fields.status.name
-          isQA = (status == "Test Pullable")
+          isQA = (_.indexOf(["Test Pullable", "Deploy Underway", "Done"], status) > -1)
           switch status
-            when "Develop Pullable" then msg = "#{_.sample(salutations)}, #{_.sample(names)}! #{ticket} is ready for code review."
-            when "Code Review Pullable" then msg = "#{_.sample(salutations)}, #{_.sample(names)}! #{ticket} is pullable from code review."
+            when "Develop Pullable" then msg = "#{_.sample(salutations)}, team! #{ticket} is ready for code review."
+            when "Code Review Pullable" then msg = "#{_.sample(salutations)}, team! #{ticket} is pullable from code review."
             when "Test Pullable" then msg = "#{_.sample(salutations)}, @emily.guadalupe! #{ticket} is ready for QA."
-            when "Deploy Underway" then msg = "#{_.sample(salutations)}, #{_.sample(names)}! #{ticket} is moving to Production."
-            when "Done" then msg = "#{_.sample(salutations)}, #{_.sample(names)}! #{ticket} is in Production."
+            when "Deploy Underway" then msg = "#{_.sample(salutations)}, team! #{ticket} is moving to Production."
+            when "Done" then msg = "#{_.sample(salutations)}, team! #{ticket} is in Production."
             else msg = null
 
         if msg 
