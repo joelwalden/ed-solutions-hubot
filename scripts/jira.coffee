@@ -1,7 +1,18 @@
 util = require "util"
+redis = require "redis"
 _ = require "lodash"
 
+redisClient = redis.createClient(process.env.REDIS_URL || "6379")
+
 module.exports = (robot) ->
+  robot.hear /set key to value/, (res) ->
+    redisClient.set("key", "value")
+
+  robot.hear /what is key/, (res) ->
+    redisClient.get("key", (err, reply) ->
+      res.reply reply
+    )
+
   robot.hear /(ES-[0-9]+)/g, (res) ->
     createJiraLink res
 
