@@ -2,17 +2,7 @@ util = require "util"
 redis = require "redis"
 _ = require "lodash"
 
-redisClient = redis.createClient(process.env.REDIS_URL || "6379")
-
 module.exports = (robot) ->
-  robot.hear /set key to value/, (res) ->
-    redisClient.set("key", "value")
-
-  robot.hear /what is key/, (res) ->
-    redisClient.get("key", (err, reply) ->
-      res.reply reply
-    )
-
   robot.hear /(ES-[0-9]+)/g, (res) ->
     createJiraLink res
 
@@ -46,7 +36,7 @@ module.exports = (robot) ->
             else msg = null
 
         if msg 
-          msg += "\n>*Summary*: #{data.issue.fields.summary}\n>*Link*: https://everydollar.atlassian.net/browse/#{ticket}"
+          msg += "\n>*Summary*: #{data.issue.fields.summary}\n>*Link*: https://ramseysolutions.atlassian.net/browse/#{ticket}"
           if isQA
             broadcastRoom = "qa-ragecage"
           else
@@ -58,10 +48,10 @@ module.exports = (robot) ->
 createJiraLink = (res) ->
   match = res.match
   if match.length == 1
-    jiraLink = "https://everydollar.atlassian.net/browse/" + res.match[0] 
+    jiraLink = "https://ramseysolutions.atlassian.net/browse/" + res.match[0] 
     res.reply "Here's a link for you:\n> #{jiraLink}"
   else if match.length > 1
     reply = "Here are some links for you: \n"
     _.each match, (val) ->
-      reply += "> https://everydollar.atlassian.net/browse/#{val}\n"
+      reply += "> https://ramseysolutions.atlassian.net/browse/#{val}\n"
     res.reply reply
